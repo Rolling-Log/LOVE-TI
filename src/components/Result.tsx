@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { Download, RotateCcw, Share2, Sparkles } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import { RotateCcw, Share2 } from 'lucide-react';
 import { personalities } from '../data/personalities';
 
 interface ResultProps {
@@ -23,30 +22,13 @@ export default function Result({ scores, onRestart }: ResultProps) {
   const personality = personalities[type] || personalities['ACES'];
 
   const handleShare = async () => {
-    const text = `I'm a ${personality.code} 👻\n${personality.slogan}\n\n测测你的恋爱人格：${window.location.href}`;
+    const text = `我是 ${personality.code} (${personality.chineseName}) 👻\n“${personality.slogan}”\n\n测测你的恋爱人格：${window.location.href}`;
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!resultRef.current) return;
-    try {
-      const canvas = await html2canvas(resultRef.current, {
-        scale: 2,
-        backgroundColor: '#fafafa',
-      });
-      const url = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `love-personality-${personality.code}.png`;
-      a.click();
-    } catch (err) {
-      console.error('Failed to generate image', err);
     }
   };
 
@@ -70,7 +52,7 @@ export default function Result({ scores, onRestart }: ResultProps) {
           <div className="relative z-10 space-y-6">
             <div className="text-center space-y-4">
               <div className="inline-block bg-black text-white px-3 py-1 text-sm font-bold font-display">
-                YOUR RESULT
+                你的恋爱人格
               </div>
               
               <div>
@@ -120,40 +102,26 @@ export default function Result({ scores, onRestart }: ResultProps) {
               <div>TYPE: {type}</div>
               <div>BEAT {randomPercent}% USERS</div>
             </div>
-
-            <div className="text-[10px] text-zinc-500 font-mono leading-tight pt-4 border-t-2 border-black space-y-1 text-left">
-              <p className="font-bold text-black">🎨 AVATAR GENERATION DATA:</p>
-              <p><span className="font-bold">Prompt:</span> {personality.avatar_prompt}</p>
-              <p><span className="font-bold">Pose:</span> {personality.pose}</p>
-              <p><span className="font-bold">Colors:</span> {personality.color_scheme}</p>
-            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 pt-4">
+        <div className="space-y-4 pt-4">
           <button
             onClick={handleShare}
-            className="flex items-center justify-center gap-2 bg-black text-white font-bold py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-black text-white font-bold py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
           >
             <Share2 className="w-4 h-4" />
-            {copied ? 'COPIED!' : 'COPY TEXT'}
+            {copied ? '已复制！' : '复制结果'}
           </button>
+
           <button
-            onClick={handleDownload}
-            className="flex items-center justify-center gap-2 bg-rose-500 text-white font-bold py-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            onClick={onRestart}
+            className="w-full flex items-center justify-center gap-2 bg-white text-black font-bold py-3 border-2 border-black hover:bg-zinc-100 transition-colors"
           >
-            <Download className="w-4 h-4" />
-            SAVE IMAGE
+            <RotateCcw className="w-4 h-4" />
+            重新测试
           </button>
         </div>
-
-        <button
-          onClick={onRestart}
-          className="w-full flex items-center justify-center gap-2 bg-white text-black font-bold py-3 border-2 border-black hover:bg-zinc-100 transition-colors"
-        >
-          <RotateCcw className="w-4 h-4" />
-          RETAKE QUIZ
-        </button>
       </motion.div>
     </div>
   );
