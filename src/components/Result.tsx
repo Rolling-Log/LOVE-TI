@@ -67,13 +67,14 @@ export default function Result({ scores, onRestart }: ResultProps) {
               <div className="flex justify-center py-2">
                 <div className="w-48 h-48 bg-[#e5e5e5] border-4 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
                   <img 
-                    src={`https://api.dicebear.com/7.x/shapes/svg?seed=${personality.code}&backgroundColor=e5e5e5`} 
-                    alt="Avatar" 
-                    className="w-full h-full object-cover opacity-80 mix-blend-multiply"
+                    src={`/avatars/${personality.code}.png`} 
+                    alt={personality.code} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to dicebear if local image is not found
+                      (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${personality.code}&backgroundColor=e5e5e5`;
+                    }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center font-display font-black text-4xl text-black/10 rotate-45">
-                    {personality.code}
-                  </div>
                 </div>
               </div>
 
